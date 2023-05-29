@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 let items = ["Study", "Do the dishes", "Shower", "Cook", "Eat"];
+let workItems = [];
 
 app.get("/", function(req, res){
     let today = new Date();
@@ -45,13 +46,26 @@ app.get("/", function(req, res){
             break;
     }*/
 
-    res.render("list", {kindOfDay: day, newItems: items});
+    res.render("list", {listTitle: day, newItems: items});
 });
 
 app.post("/", function(request, response){
     let item = request.body.newListItem;
-    items.push(item);
-    response.redirect("/");
+    if (request.body.list === "Work List")
+    {
+        workItems.push(item);
+        response.redirect("/work");
+    }
+    else
+    {
+        items.push(item);
+        response.redirect("/");
+    }
+});
+
+app.get("/work", function(req, res){
+    res.render("list", {listTitle: "Work List", newItems: workItems});
+ 
 });
 
 app.listen(port, function(){
